@@ -1,11 +1,24 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import { RandomProps, getRandomNumber } from "@/src/services/getRandomNumber";
+import Head from "next/head";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [randomizerProps, setRandomizerProps] = useState<RandomProps>({
+    numbers: 1,
+    min: 1,
+    max: 2,
+  });
+  const [randomizedNumber, setRandomizedNumber] = useState([0]);
+  const [randomize, setRandomize] = useState(false);
+  useEffect(() => {
+    if (randomize) {
+      getRandomNumber(randomizerProps).then((res) => {
+        setRandomizedNumber(res);
+      });
+      setRandomize(false);
+    }
+  }, [randomize, randomizerProps]);
+
   return (
     <>
       <Head>
@@ -14,101 +27,58 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`${styles.main} ${inter.className}`}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
+      <main>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+        >
+          <label>Qtd numeros:</label>
+          <input
+            type="number"
+            style={{ width: "100px", height: "30px" }}
+            onChange={(e) =>
+              setRandomizerProps({
+                ...randomizerProps,
+                numbers: parseInt(e.target.value),
+              })
+            }
           />
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
+          <label>Min:</label>
+          <input
+            style={{ width: "100px", height: "30px" }}
+            onChange={(e) =>
+              setRandomizerProps({
+                ...randomizerProps,
+                min: parseInt(e.target.value),
+              })
+            }
+          />
+          <label>Max:</label>
+          <input
+            style={{ width: "100px", height: "30px" }}
+            onChange={(e) =>
+              setRandomizerProps({
+                ...randomizerProps,
+                max: parseInt(e.target.value),
+              })
+            }
+          />
+          <button
+            onClick={() => setRandomize(true)}
+            style={{ width: "100px", height: "30px" }}
           >
-            <h2>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
+            RANDOMIZE
+          </button>
+          <p style={{ marginTop: "40px", fontSize: "25px", color: "#F1B1C5" }}>
+            {randomizedNumber}
+          </p>
         </div>
       </main>
     </>
-  )
+  );
 }
